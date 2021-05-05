@@ -1,0 +1,123 @@
+{
+"id":123456,
+"patientDetails": [
+   {
+      "patientID":987453018,
+      "patientFirstName":"ASHLEY",
+      "patientLastName":"MORGAN",
+      "patientDOB":"1991-12-04",
+      "prescriptionDetails":[
+         {
+            "rxNumber":"0689421",
+            "drugName":"BOOSTRIX TDAP VACCINE SYRINGE",
+            "drugQuantity":"0.5",
+            "imzType":"Tdap (Whooping Cough)",
+            "checkInTime":"2021-05-04T14:06:45.111Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"Y",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         },
+         {
+            "rxNumber":"0689422",
+            "drugName":"BOOSTRIX TDAP VACCINE SYRUP",
+            "drugQuantity":"0.5",
+            "imzType":"Ldap (Whooping Cough)",
+            "checkInTime":"2021-04-28T17:06:45.222Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"Y",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         },
+         {
+            "rxNumber":"0689423",
+            "drugName":"BOOSTRIX VACCINE CAPSULE",
+            "drugQuantity":"0.3",
+            "imzType":"Rdap (Whooping Cough)",
+            "checkInTime":"2021-04-28T13:50:45.333Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"N",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         }
+      ],
+      "isAppointment":"N"
+   },
+   {
+      "patientID":987453019,
+      "patientFirstName":"BAILEY",
+      "patientLastName":"GEORGE",
+      "patientDOB":"1991-10-10",
+      "prescriptionDetails":[
+         {
+            "rxNumber":"0689424",
+            "drugName":"BOOSTRIX TDAP VACCINE SYRINGE",
+            "drugQuantity":"0.5",
+            "imzType":"Tdap (Whooping Cough)",
+            "checkInTime":"2021-04-28T13:45:45.444Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"Y",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         },
+         {
+            "rxNumber":"0689425",
+            "drugName":"BOOSTRIX TDAP VACCINE SYRUP",
+            "drugQuantity":"0.5",
+            "imzType":"Ldap (Whooping Cough)",
+            "checkInTime":"2021-05-04T14:06:45.555Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"Y",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         },
+         {
+            "rxNumber":"0689426",
+            "drugName":"BOOSTRIX VACCINE CAPSULE",
+            "drugQuantity":"0.3",
+            "imzType":"Rdap (Whooping Cough)",
+            "checkInTime":"2021-04-28T13:55:45.666Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"N",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         }
+      ],
+      "isAppointment":"N"
+   },
+   {
+      "patientID":987453020,
+      "patientFirstName":"JOHN",
+      "patientLastName":"BOSCO",
+      "patientDOB":"1991-06-15",
+      "prescriptionDetails":[
+         {
+            "rxNumber":"0689427",
+            "drugName":"BOOSTRIX TDAP VACCINE SYRINGE",
+            "drugQuantity":"0.2",
+            "imzType":"Tdap (Whooping Cough)",
+            "checkInTime":"2021-04-28T16:05:45.777Z",
+            "preferredtextInd":"2",
+            "digitalQuestionaireReceivedInd":"Y",
+            "imzDoseNumber":"1",
+            "imzScriptVerifiedInd":"N",
+            "cardImageCaptureRequired":"N",
+            "isRelationshipToPatientRequired":"N"
+         }
+      ],
+      "isAppointment":"N"
+   }
+]
+}

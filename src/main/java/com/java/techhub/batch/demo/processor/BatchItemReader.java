@@ -52,5 +52,19 @@ public class BatchItemReader implements ItemReader<RootModel> {
 		}
 		return null;
 	}
+	
+	/**
+	 * @return the batchJobState
+	 */
+	public boolean isBatchJobState() {
+		return batchJobState;
+	}
+
+	/**
+	 * @param batchJobState the batchJobState to set
+	 */
+	public void setBatchJobState(boolean batchJobState) {
+		this.batchJobState = batchJobState;
+	}
 
 }

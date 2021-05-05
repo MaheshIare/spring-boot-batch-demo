@@ -29,10 +29,13 @@ import com.java.techhub.batch.demo.processor.JobCompletionNotificationListener;
 public class BatchConfiguration {
 
 	@Autowired
-	public JobBuilderFactory jobBuilderFactory;
+	private JobBuilderFactory jobBuilderFactory;
 
 	@Autowired
-	public StepBuilderFactory stepBuilderFactory;
+	private StepBuilderFactory stepBuilderFactory;
+	
+	@Autowired
+	private JobCompletionNotificationListener jobCompletionNotifierListener;
 
 	@Bean
 	public ItemReader<RootModel> reader() {
@@ -48,17 +51,17 @@ public class BatchConfiguration {
 	public BatchItemWriter writer() {
 		return new BatchItemWriter();
 	}
-
-	@Bean
-	public Job importDataJob(JobCompletionNotificationListener listener, Step step1) {
-		return jobBuilderFactory.get("importDataJob").incrementer(new RunIdIncrementer()).listener(listener).flow(step1)
+	
+	@Bean("processDataJob")
+	public Job processDataJob() {
+		return jobBuilderFactory.get("processDataJob").incrementer(new RunIdIncrementer()).listener(jobCompletionNotifierListener).flow(step1())
 				.end().build();
 	}
 
 	@Bean
-	public Step step1(BatchItemWriter writer) {
+	public Step step1() {
 		return stepBuilderFactory.get("step1").<RootModel, RootModel>chunk(10).reader(reader()).processor(processor())
-				.writer(writer).build();
+				.writer(writer()).build();
 	}
 
 }

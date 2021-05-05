@@ -31,6 +31,14 @@ JobCompletionNoticiationListener.java -> This is for checking the job completion
 ApiController.java -> Dummy controller for replicating batch steps of calling upstream/downstream API
 
 ```
+## Important configuration
+
+Added scheduler which executes for every 1 minute. Also disabled the job execution during the appplication startup using the below configuration.
+
+```bash
+## To disable the job execution during the application startup
+spring.batch.job.enabled=false
+```
 
 ## Author
 

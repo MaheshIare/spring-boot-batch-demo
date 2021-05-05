@@ -4,11 +4,14 @@
 package com.java.techhub.batch.demo.config;
 
 import java.time.Duration;
+import java.util.Collections;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+
+import com.java.techhub.batch.demo.interceptors.ApiRequestInterceptor;
 
 /**
  * @author mahes
@@ -22,6 +25,8 @@ public class AppBeanConfig {
 		RestTemplateBuilder builder = new RestTemplateBuilder();
 		builder.setReadTimeout(Duration.ofSeconds(60000));
 		builder.setConnectTimeout(Duration.ofSeconds(60000));
-		return builder.build();
+		RestTemplate restTemplate = builder.build();
+		restTemplate.setInterceptors(Collections.singletonList(new ApiRequestInterceptor()));
+		return restTemplate;
 	}
 }
