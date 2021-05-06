@@ -3,7 +3,6 @@
  */
 package com.java.techhub.batch.demo.model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -215,8 +214,6 @@ public class Prescription {
 	public void setNewFlag(String newFlag) {
 		this.newFlag = newFlag;
 	}
-	
-	
 
 	@Override
 	public int hashCode() {
@@ -231,15 +228,29 @@ public class Prescription {
 	@JsonIgnore
 	public boolean isPrescriptionFlagged() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX");
+		
+		//Current date time
 		LocalDateTime currentDateTime = LocalDateTime.now();
+		//Prescription checkin time
 		LocalDateTime prescriptionDateTime = LocalDateTime.parse(getCheckInTime(), formatter);
-		Duration duration = Duration.between(prescriptionDateTime, currentDateTime);
-		if (prescriptionDateTime.compareTo(currentDateTime) < 0) {
-			long diff = duration.toMinutes();
-			if (Math.abs(diff) <= 60) {
-				setNewFlag("Flagged");
-				return true;
-			}
+		//Current time minus two hrs
+		LocalDateTime currMinusTwoHrs = currentDateTime.minusHours(2);
+		//Current time minus one hrs
+		LocalDateTime currMinusOneHrs = currentDateTime.minusHours(1);
+		
+		System.out.println("==============START==============");
+		System.out.println("Current date time: " + currentDateTime);
+		System.out.println("Current Minus Two hrs: " + currMinusTwoHrs);
+		System.out.println("Current Minus One hrs: " + currMinusOneHrs);
+		System.out.println("Prescription date time: " + prescriptionDateTime);
+		System.out.println("Is valid prescription time: " + prescriptionDateTime.compareTo(currentDateTime));
+		System.out.println("Is Prescription falls under criteria: "
+				+ (prescriptionDateTime.isAfter(currMinusTwoHrs) && prescriptionDateTime.isBefore(currMinusOneHrs)));
+		System.out.println("==============END==============");
+		if (prescriptionDateTime.compareTo(currentDateTime) < 0 && prescriptionDateTime.isAfter(currMinusTwoHrs)
+				&& prescriptionDateTime.isBefore(currMinusOneHrs)) {
+			setNewFlag("Flagged");
+			return true;
 		}
 		return false;
 	}

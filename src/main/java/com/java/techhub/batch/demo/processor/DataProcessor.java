@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -27,12 +28,14 @@ import com.java.techhub.batch.demo.model.RootModel;
 @Component
 public class DataProcessor {
 	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
 	private static final Logger log = LoggerFactory.getLogger(DataProcessor.class);
 	
 	public RootModel parseJson() throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
 		log.info("Reading data from json file...");
-		RootModel rootModel = mapper.readValue(new ClassPathResource("data/data-parser.json").getFile(),
+		RootModel rootModel = objectMapper.readValue(new ClassPathResource("data/data-parser.json").getFile(),
 				new TypeReference<RootModel>() {
 				});
 		return rootModel;
@@ -58,7 +61,7 @@ public class DataProcessor {
 	}
 
 	public void prettyPrintJson(RootModel rootModel) throws JsonProcessingException {
-		ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		ObjectWriter writer = objectMapper.writer().withDefaultPrettyPrinter();
 		String prettyJson = writer.writeValueAsString(rootModel);
 		log.info("Pretty printed JSON:\n{}", prettyJson);
 	}
