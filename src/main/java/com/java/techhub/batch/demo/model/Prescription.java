@@ -4,8 +4,7 @@
 package com.java.techhub.batch.demo.model;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,11 +41,11 @@ public class Prescription {
 	private String isRelationshipToPatientRequired;
 
 	private String newFlag;
-	
+
 	public Prescription() {
-		//Default constructor
+		// Default constructor
 	}
-	
+
 	/**
 	 * @return the rxNumber
 	 */
@@ -139,7 +138,8 @@ public class Prescription {
 	}
 
 	/**
-	 * @param digitalQuestionaireReceivedInd the digitalQuestionaireReceivedInd to set
+	 * @param digitalQuestionaireReceivedInd the digitalQuestionaireReceivedInd to
+	 *                                       set
 	 */
 	public void setDigitalQuestionaireReceivedInd(String digitalQuestionaireReceivedInd) {
 		this.digitalQuestionaireReceivedInd = digitalQuestionaireReceivedInd;
@@ -195,7 +195,8 @@ public class Prescription {
 	}
 
 	/**
-	 * @param isRelationshipToPatientRequired the isRelationshipToPatientRequired to set
+	 * @param isRelationshipToPatientRequired the isRelationshipToPatientRequired to
+	 *                                        set
 	 */
 	public void setIsRelationshipToPatientRequired(String isRelationshipToPatientRequired) {
 		this.isRelationshipToPatientRequired = isRelationshipToPatientRequired;
@@ -229,11 +230,9 @@ public class Prescription {
 
 	@JsonIgnore
 	public boolean isPrescriptionFlagged() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-		OffsetDateTime currentDateTime = OffsetDateTime.now().atZoneSameInstant(ZoneId.systemDefault())
-				.toOffsetDateTime();
-		OffsetDateTime prescriptionDateTime = OffsetDateTime.parse(getCheckInTime(), formatter)
-				.atZoneSameInstant(ZoneId.systemDefault()).minusHours(5).minusMinutes(30).toOffsetDateTime();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX");
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		LocalDateTime prescriptionDateTime = LocalDateTime.parse(getCheckInTime(), formatter);
 		Duration duration = Duration.between(prescriptionDateTime, currentDateTime);
 		if (prescriptionDateTime.compareTo(currentDateTime) < 0) {
 			long diff = duration.toMinutes();

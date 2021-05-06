@@ -60,6 +60,6 @@ public class DataProcessor {
 	public void prettyPrintJson(RootModel rootModel) throws JsonProcessingException {
 		ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String prettyJson = writer.writeValueAsString(rootModel);
-		log.info("Pretty printed JSON: {}\n", prettyJson);
+		log.info("Pretty printed JSON:\n{}", prettyJson);
 	}
 }
