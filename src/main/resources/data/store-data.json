@@ -1,0 +1,46 @@
+{
+	"code": "200",
+	"message": "success",
+	"offlineStatus": false,
+	"payload": {
+		"pharmacyInfo": {
+			"hoursOfOperation": [
+				{
+					"dayOfWeek": "Monday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				},
+				{
+					"dayOfWeek": "Tuesday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				},
+				{
+					"dayOfWeek": "Wednesday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				},
+				{
+					"dayOfWeek": "Thursday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				},
+				{
+					"dayOfWeek": "Friday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				},
+				{
+					"dayOfWeek": "Saturday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				},
+				{
+					"dayOfWeek": "Sunday",
+					"openTime": "00:00",
+					"closeTime": "23:59"
+				}
+			]
+		}
+	}
+}
