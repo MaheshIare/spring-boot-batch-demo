@@ -22,15 +22,15 @@ public class BatchItemProcessor implements ItemProcessor<RootModel, RootModel> {
 	private DataProcessor dataProcessor;
 	
 	@Override
-	public RootModel process(RootModel processedModel) throws Exception {
+	public RootModel process(RootModel rootModel) throws Exception {
 		logger.info("Processing root model for flagging...");
 		try {
-			return dataProcessor.processPatientDetails(processedModel);
+			return dataProcessor.processPatientDetails(rootModel);
 		} catch (Exception ex) {
 			logger.error("Exception occured while processing the details for flagging due to: {}", ex);
 		}
 		logger.warn("Something went wrong while flagging the results, hence returning the default model");
-		return processedModel;
+		return rootModel;
 	}
 
 }
