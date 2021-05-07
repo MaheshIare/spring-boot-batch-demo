@@ -3,67 +3,43 @@
  */
 package com.java.techhub.batch.demo.model;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 /**
  * @author mahes
  *
  */
-@JsonInclude(value = Include.NON_NULL)
 public class RootModel {
 
-	private Integer id;
-	private List<Patient> patientDetails;
-	private String newFlag;
+	private PatientDetailModel patientDetailModel;
 	
+	private StoreResponse storeResponse;
+
 	/**
-	 * @return the newFlag
+	 * @return the patientDetailModel
 	 */
-	public String getNewFlag() {
-		return newFlag;
+	public PatientDetailModel getPatientDetailModel() {
+		return patientDetailModel;
 	}
+
 	/**
-	 * @param newFlag the newFlag to set
+	 * @param patientDetailModel the patientDetailModel to set
 	 */
-	public void setNewFlag(String newFlag) {
-		this.newFlag = newFlag;
+	public void setPatientDetailModel(PatientDetailModel patientDetailModel) {
+		this.patientDetailModel = patientDetailModel;
 	}
+
 	/**
-	 * @return the id
+	 * @return the storeResponse
 	 */
-	public Integer getId() {
-		return id;
+	public StoreResponse getStoreResponse() {
+		return storeResponse;
 	}
+
 	/**
-	 * @param id the id to set
+	 * @param storeResponse the storeResponse to set
 	 */
-	public void setId(Integer id) {
-		this.id = id;
+	public void setStoreResponse(StoreResponse storeResponse) {
+		this.storeResponse = storeResponse;
 	}
-	/**
-	 * @return the patientDetails
-	 */
-	public List<Patient> getPatientDetails() {
-		return patientDetails;
-	}
-	/**
-	 * @param patientDetails the patientDetails to set
-	 */
-	public void setPatientDetails(List<Patient> patientDetails) {
-		this.patientDetails = patientDetails;
-	}
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
-	}
-	@Override
-	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
-	}
+	
 	
 }

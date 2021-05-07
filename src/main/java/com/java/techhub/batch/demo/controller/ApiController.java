@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.java.techhub.batch.demo.model.PatientDetailModel;
 import com.java.techhub.batch.demo.model.RootModel;
 import com.java.techhub.batch.demo.model.StoreResponse;
 import com.java.techhub.batch.demo.processor.DataProcessor;
@@ -27,8 +28,8 @@ public class ApiController {
 	@Autowired
 	private DataProcessor dataProcessor;
 
-	@GetMapping
-	public ResponseEntity<RootModel> readPatientData() throws Exception {
+	@GetMapping("/patient")
+	public ResponseEntity<PatientDetailModel> readPatientData() throws Exception {
 		return new ResponseEntity<>(dataProcessor.parseJson(), HttpStatus.OK);
 	}
 

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.java.techhub.batch.demo.model.OperationHours;
 import com.java.techhub.batch.demo.model.Patient;
+import com.java.techhub.batch.demo.model.PatientDetailModel;
 import com.java.techhub.batch.demo.model.Prescription;
 import com.java.techhub.batch.demo.model.RootModel;
 import com.java.techhub.batch.demo.model.StoreResponse;
@@ -41,16 +42,16 @@ public class DataProcessor {
 
 	public void prettyPrintJson(RootModel rootModel) throws JsonProcessingException {
 		ObjectWriter writer = objectMapper.writer().withDefaultPrettyPrinter();
-		String prettyJson = writer.writeValueAsString(rootModel);
+		String prettyJson = writer.writeValueAsString(rootModel.getPatientDetailModel());
 		log.info("Pretty printed JSON:\n{}", prettyJson);
 	}
 	
-	public RootModel parseJson() throws JsonParseException, JsonMappingException, IOException {
+	public PatientDetailModel parseJson() throws JsonParseException, JsonMappingException, IOException {
 		log.info("Reading data from json file...");
-		RootModel rootModel = objectMapper.readValue(new ClassPathResource("data/data-parser.json").getFile(),
-				new TypeReference<RootModel>() {
+		PatientDetailModel patientDetailModel = objectMapper.readValue(new ClassPathResource("data/data-parser.json").getFile(),
+				new TypeReference<PatientDetailModel>() {
 				});
-		return rootModel;
+		return patientDetailModel;
 	}
 
 	public StoreResponse parseStoreJson() throws JsonParseException, JsonMappingException, IOException {
@@ -62,21 +63,21 @@ public class DataProcessor {
 	}
 
 	public RootModel processPatientDetails(RootModel rootModel) throws IOException {
-		boolean flag = validateCurrentTimeWithStoreTime();
+		boolean flag = validateCurrentTimeWithStoreTime(rootModel);
 		if (flag) {
-			flagAllPrescriptions(rootModel);
+			flagAllPrescriptions(rootModel.getPatientDetailModel());
 		} else {
 			log.info("Processing individual prescription...");
-			if (!rootModel.getPatientDetails().isEmpty()) {
+			if (!rootModel.getPatientDetailModel().getPatientDetails().isEmpty()) {
 				// Check if prescriptions for the patients can be flagged
-				for (Patient record : rootModel.getPatientDetails()) {
+				for (Patient record : rootModel.getPatientDetailModel().getPatientDetails()) {
 					if (!record.getPrescriptionDetails().isEmpty()) {
 						for (Prescription prescription : record.getPrescriptionDetails()) {
 							// Check if precription check in time falls in last 60 mins
 							if (isPrescriptionFlagged(prescription.getCheckInTime())) {
 								prescription.setNewFlag(FLAG);
 								record.setNewFlag(FLAG);
-								rootModel.setNewFlag(FLAG);
+								rootModel.getPatientDetailModel().setNewFlag(FLAG);
 							}
 						}
 					}
@@ -112,8 +113,8 @@ public class DataProcessor {
 		return false;
 	}
 
-	private boolean validateCurrentTimeWithStoreTime() throws IOException {
-		StoreResponse storeData = parseStoreJson();
+	private boolean validateCurrentTimeWithStoreTime(RootModel rootModel) throws IOException {
+		StoreResponse storeData = rootModel.getStoreResponse();
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		String currentTime = currentDateTime.getHour() + ":"
 				+ (currentDateTime.getMinute() < 9 ? "0" + currentDateTime.getMinute() : currentDateTime.getMinute());
@@ -150,16 +151,16 @@ public class DataProcessor {
 		return null;
 	}
 
-	private void flagAllPrescriptions(RootModel rootModel) {
+	private void flagAllPrescriptions(PatientDetailModel patientDetailModel) {
 		log.info("Flagging all patients...");
-		if (!rootModel.getPatientDetails().isEmpty()) {
-			for (Patient record : rootModel.getPatientDetails()) {
+		if (!patientDetailModel.getPatientDetails().isEmpty()) {
+			for (Patient record : patientDetailModel.getPatientDetails()) {
 				for (Prescription prescription : record.getPrescriptionDetails()) {
 					prescription.setNewFlag(FLAG);
 				}
 				record.setNewFlag(FLAG);
 			}
 		}
-		rootModel.setNewFlag(FLAG);
+		patientDetailModel.setNewFlag(FLAG);
 	}
 }
