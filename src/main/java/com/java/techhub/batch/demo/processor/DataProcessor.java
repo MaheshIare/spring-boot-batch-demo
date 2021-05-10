@@ -6,6 +6,8 @@ package com.java.techhub.batch.demo.processor;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
@@ -44,7 +46,7 @@ public class DataProcessor {
 		String prettyJson = writer.writeValueAsString(rootModel);
 		log.info("Pretty printed JSON:\n{}", prettyJson);
 	}
-	
+
 	public RootModel parseJson() throws JsonParseException, JsonMappingException, IOException {
 		log.info("Reading data from json file...");
 		RootModel rootModel = objectMapper.readValue(new ClassPathResource("data/data-parser.json").getFile(),
@@ -87,9 +89,10 @@ public class DataProcessor {
 	}
 
 	private boolean isPrescriptionFlagged(String checkInTime) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		// Current date time
-		LocalDateTime currentDateTime = LocalDateTime.now();
+		LocalDateTime currentDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
+				.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
 		// Prescription checkin time
 		LocalDateTime prescriptionDateTime = LocalDateTime.parse(checkInTime, formatter);
 		// Current time minus two hrs
@@ -115,8 +118,9 @@ public class DataProcessor {
 	private boolean validateCurrentTimeWithStoreTime() throws IOException {
 		StoreResponse storeData = parseStoreJson();
 		LocalDateTime currentDateTime = LocalDateTime.now();
-		String currentTime = currentDateTime.getHour() + ":"
-				+ (currentDateTime.getMinute() < 9 ? "0" + currentDateTime.getMinute() : currentDateTime.getMinute());
+		String currentTime = (currentDateTime.getHour() <= 9 ? "0" + currentDateTime.getHour()
+				: currentDateTime.getHour()) + ":"
+				+ (currentDateTime.getMinute() <= 9 ? "0" + currentDateTime.getMinute() : currentDateTime.getMinute());
 		String weekDay = currentDateTime.getDayOfWeek().name();
 		String closeTime = getCloseTimeFromStore(weekDay, storeData);
 		LocalTime storeCloseTime = LocalTime.parse(closeTime);
