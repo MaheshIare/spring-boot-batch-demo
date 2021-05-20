@@ -4,11 +4,11 @@
 package com.java.techhub.batch.demo.processor;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,16 +89,27 @@ public class DataProcessor {
 	}
 
 	private boolean isPrescriptionFlagged(String checkInTime) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-		// Current date time
-		LocalDateTime currentDateTime = LocalDateTime.now().atZone(ZoneId.systemDefault())
-				.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
-		// Prescription checkin time
-		LocalDateTime prescriptionDateTime = LocalDateTime.parse(checkInTime, formatter);
-		// Current time minus two hrs
-		LocalDateTime currMinusTwoHrs = currentDateTime.minusHours(2);
-		// Current time minus one hrs
-		LocalDateTime currMinusOneHrs = currentDateTime.minusHours(1);
+		SimpleDateFormat sdWithUtc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		sdWithUtc.setTimeZone(TimeZone.getTimeZone("UTC"));
+		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		Date prescriptionDateTime = null;
+		Date currentDateTime = null;
+		try {
+			prescriptionDateTime = sd.parse(checkInTime);
+			currentDateTime = sdWithUtc.parse(sdWithUtc.format(new Date()));
+		} catch (Exception ex) {
+			log.error("Exception occured due to: {}", ex);
+		}
+		// Current time minus 2 hrs
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currentDateTime);
+		cal.add(Calendar.HOUR, -2);
+		Date currMinusTwoHrs = cal.getTime();
+		// Current time minus 1 hrs
+		cal = Calendar.getInstance();
+		cal.setTime(currentDateTime);
+		cal.add(Calendar.HOUR, -1);
+		Date currMinusOneHrs = cal.getTime();
 		log.info("==============START==============");
 		log.info("Current date time: {}", currentDateTime);
 		log.info("Current Minus Two hrs: {}", currMinusTwoHrs);
@@ -106,10 +117,10 @@ public class DataProcessor {
 		log.info("Prescription date time: {}", prescriptionDateTime);
 		log.info("Is valid prescription time: {}", prescriptionDateTime.compareTo(currentDateTime));
 		log.info("Is Prescription falls under criteria: {}",
-				(prescriptionDateTime.isAfter(currMinusTwoHrs) && prescriptionDateTime.isBefore(currMinusOneHrs)));
-		System.out.println("==============END==============");
-		if (prescriptionDateTime.compareTo(currentDateTime) < 0 && prescriptionDateTime.isAfter(currMinusTwoHrs)
-				&& prescriptionDateTime.isBefore(currMinusOneHrs)) {
+				(prescriptionDateTime.after(currMinusTwoHrs) && prescriptionDateTime.before(currMinusOneHrs)));
+		log.info("==============END==============");
+		if (prescriptionDateTime.compareTo(currentDateTime) < 0 && prescriptionDateTime.after(currMinusTwoHrs)
+				&& prescriptionDateTime.before(currMinusOneHrs)) {
 			return true;
 		}
 		return false;
@@ -117,29 +128,44 @@ public class DataProcessor {
 
 	private boolean validateCurrentTimeWithStoreTime() throws IOException {
 		StoreResponse storeData = parseStoreJson();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		String currentTime = (currentDateTime.getHour() <= 9 ? "0" + currentDateTime.getHour()
-				: currentDateTime.getHour()) + ":"
-				+ (currentDateTime.getMinute() <= 9 ? "0" + currentDateTime.getMinute() : currentDateTime.getMinute());
-		String weekDay = currentDateTime.getDayOfWeek().name();
+		Date currentDateTime = null;
+		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		SimpleDateFormat time = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat dayofWeek = new SimpleDateFormat("EEEE");
+		try {
+			currentDateTime = sd.parse(sd.format(new Date()));
+		} catch (Exception ex) {
+			log.error("Exception occured due to: {}", ex);
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currentDateTime);
+		String currentTime = time.format(currentDateTime);
+		String weekDay = dayofWeek.format(currentDateTime);
 		String closeTime = getCloseTimeFromStore(weekDay, storeData);
-		LocalTime storeCloseTime = LocalTime.parse(closeTime);
-		LocalTime storeCloseTimeMinusOneHr = storeCloseTime.minusHours(1);
-		LocalTime currentLocalTime = LocalTime.parse(currentTime);
-		LocalTime eightPmTime = LocalTime.parse(EIGHT_PM_TIME);
+		Date closeTimeDt = null;
+		Date eightPmTimeDt = null;
+		Date currentTimeDt = null;
+		try {
+			closeTimeDt = time.parse(closeTime);
+			eightPmTimeDt = time.parse(EIGHT_PM_TIME);
+			currentTimeDt = time.parse(currentTime);
+		} catch (ParseException pse) {
+			log.error("Exception occured due to: {}", pse);
+		}
+		cal = Calendar.getInstance();
+		cal.setTime(closeTimeDt);
+		cal.add(Calendar.HOUR, -1);
+		Date storeCloseTimeMinusOneHr = cal.getTime();
 		log.info("===========START==========");
 		log.info("Current date time: {}", currentDateTime);
 		log.info("Current Time: {}", currentTime);
 		log.info("WeekDay from current date: {}", weekDay);
 		log.info("Store close time for {} : {}", weekDay, closeTime);
-		log.info("Store close time in LocalTime format: {}", storeCloseTime);
 		log.info("Store close time minus one Hr: {}", storeCloseTimeMinusOneHr);
-		log.info("Current time in LocalTime format: {}", currentLocalTime);
-		log.info("Eight PM time in LocalTime format: {}", eightPmTime);
-		log.info("Is current time > 8PM: {} ", currentLocalTime.isAfter(eightPmTime));
-		log.info("Is current time > Store closetime -1 : {}", currentLocalTime.isAfter(storeCloseTimeMinusOneHr));
+		log.info("Is current time > 8PM: {} ", currentTimeDt.after(eightPmTimeDt));
+		log.info("Is current time > Store closetime -1 : {}", currentTimeDt.after(storeCloseTimeMinusOneHr));
 		log.info("===========END==========");
-		if (currentLocalTime.isAfter(eightPmTime) || currentLocalTime.isAfter(storeCloseTimeMinusOneHr)) {
+		if (currentTimeDt.after(eightPmTimeDt) || currentTimeDt.after(storeCloseTimeMinusOneHr)) {
 			return true;
 		}
 		return false;
