@@ -39,7 +39,9 @@ public class DataProcessor {
 	private ObjectMapper objectMapper;
 	private static final Logger log = LoggerFactory.getLogger(DataProcessor.class);
 	private static final String FLAG = "Flagged";
-	private static final String EIGHT_PM_TIME = "20:00";
+	private static final String EIGHT_PM_TIME = "22:00";
+	private static final String DISPLAY_PROMPT = "Y";
+	private static final String CHECK_IN_WINDOW_DELIMITTER = "-";
 
 	public void prettyPrintJson(RootModel rootModel) throws JsonProcessingException {
 		ObjectWriter writer = objectMapper.writer().withDefaultPrettyPrinter();
@@ -64,7 +66,8 @@ public class DataProcessor {
 	}
 
 	public RootModel processPatientDetails(RootModel rootModel) throws IOException {
-		boolean flag = validateCurrentTimeWithStoreTime();
+		StoreResponse storeData = parseStoreJson();
+		boolean flag = validateCurrentTimeWithStoreTime(storeData);
 		if (flag) {
 			flagAllPrescriptions(rootModel);
 		} else {
@@ -75,7 +78,8 @@ public class DataProcessor {
 					if (!record.getPrescriptionDetails().isEmpty()) {
 						for (Prescription prescription : record.getPrescriptionDetails()) {
 							// Check if precription check in time falls in last 60 mins
-							if (isPrescriptionFlagged(prescription.getCheckInTime())) {
+							if (prescription.getDispPrompt().equalsIgnoreCase(DISPLAY_PROMPT) && isPrescriptionFlagged(
+									prescription.getCheckInTime(), storeData.getPayload().getValue())) {
 								prescription.setNewFlag(FLAG);
 								record.setNewFlag(FLAG);
 								rootModel.setNewFlag(FLAG);
@@ -88,32 +92,33 @@ public class DataProcessor {
 		return rootModel;
 	}
 
-	private boolean isPrescriptionFlagged(String checkInTime) {
-		SimpleDateFormat sdWithUtc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+	private boolean isPrescriptionFlagged(String checkInTime, String checkInPromptWindow) {
+		SimpleDateFormat sdWithUtc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		sdWithUtc.setTimeZone(TimeZone.getTimeZone("UTC"));
 		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		Date prescriptionDateTime = null;
 		Date currentDateTime = null;
 		try {
 			prescriptionDateTime = sd.parse(checkInTime);
-			currentDateTime = sdWithUtc.parse(sdWithUtc.format(new Date()));
+			currentDateTime = sd.parse(sdWithUtc.format(new Date()));
 		} catch (Exception ex) {
 			log.error("Exception occured due to: {}", ex);
 		}
-		// Current time minus 2 hrs
+		String[] window = checkInPromptWindow.split(CHECK_IN_WINDOW_DELIMITTER, 2);
+		// Current time minus window[1] hrs
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(currentDateTime);
-		cal.add(Calendar.HOUR, -2);
+		cal.add(Calendar.HOUR, Integer.parseInt(CHECK_IN_WINDOW_DELIMITTER + window[1]));
 		Date currMinusTwoHrs = cal.getTime();
-		// Current time minus 1 hrs
+		// Current time minus window[0] hrs
 		cal = Calendar.getInstance();
 		cal.setTime(currentDateTime);
-		cal.add(Calendar.HOUR, -1);
+		cal.add(Calendar.HOUR, Integer.parseInt(CHECK_IN_WINDOW_DELIMITTER + window[0]));
 		Date currMinusOneHrs = cal.getTime();
 		log.info("==============START==============");
 		log.info("Current date time: {}", currentDateTime);
-		log.info("Current Minus Two hrs: {}", currMinusTwoHrs);
-		log.info("Current Minus One hrs: {}", currMinusOneHrs);
+		log.info("Current Minus window[1] hrs: {}", currMinusTwoHrs);
+		log.info("Current Minus window[0] hrs: {}", currMinusOneHrs);
 		log.info("Prescription date time: {}", prescriptionDateTime);
 		log.info("Is valid prescription time: {}", prescriptionDateTime.compareTo(currentDateTime));
 		log.info("Is Prescription falls under criteria: {}",
@@ -126,10 +131,9 @@ public class DataProcessor {
 		return false;
 	}
 
-	private boolean validateCurrentTimeWithStoreTime() throws IOException {
-		StoreResponse storeData = parseStoreJson();
+	private boolean validateCurrentTimeWithStoreTime(StoreResponse storeData) throws IOException {
 		Date currentDateTime = null;
-		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		SimpleDateFormat time = new SimpleDateFormat("HH:mm");
 		SimpleDateFormat dayofWeek = new SimpleDateFormat("EEEE");
 		try {

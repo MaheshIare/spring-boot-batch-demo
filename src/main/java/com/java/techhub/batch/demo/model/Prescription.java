@@ -16,6 +16,8 @@ public class Prescription {
 	private String rxNumber;
 
 	private String drugName;
+	
+	private String dispPrompt;
 
 	private String drugQuantity;
 
@@ -69,6 +71,20 @@ public class Prescription {
 		this.drugName = drugName;
 	}
 
+	/**
+	 * @return the dispPrompt
+	 */
+	public String getDispPrompt() {
+		return dispPrompt;
+	}
+
+	/**
+	 * @param dispPrompt the dispPrompt to set
+	 */
+	public void setDispPrompt(String dispPrompt) {
+		this.dispPrompt = dispPrompt;
+	}
+	
 	/**
 	 * @return the drugQuantity
 	 */

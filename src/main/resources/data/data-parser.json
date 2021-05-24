@@ -10,6 +10,7 @@
          {
             "rxNumber":"0689421",
             "drugName":"BOOSTRIX TDAP VACCINE SYRINGE",
+            "dispPrompt": "N",
             "drugQuantity":"0.5",
             "imzType":"Tdap (Whooping Cough)",
             "checkInTime":"2021-05-20T17:15:45.000Z",
@@ -23,9 +24,10 @@
          {
             "rxNumber":"0689422",
             "drugName":"BOOSTRIX TDAP VACCINE SYRUP",
+            "dispPrompt": "Y",
             "drugQuantity":"0.5",
             "imzType":"Ldap (Whooping Cough)",
-            "checkInTime":"2021-04-28T17:06:45.222Z",
+            "checkInTime":"2021-05-24T20:06:45.222Z",
             "preferredtextInd":"2",
             "digitalQuestionaireReceivedInd":"Y",
             "imzDoseNumber":"1",
@@ -36,9 +38,10 @@
          {
             "rxNumber":"0689423",
             "drugName":"BOOSTRIX VACCINE CAPSULE",
+            "dispPrompt": "Y",
             "drugQuantity":"0.3",
             "imzType":"Rdap (Whooping Cough)",
-            "checkInTime":"2021-04-28T13:50:45.333Z",
+            "checkInTime":"2021-05-24T13:30:45.333Z",
             "preferredtextInd":"2",
             "digitalQuestionaireReceivedInd":"N",
             "imzDoseNumber":"1",
@@ -58,9 +61,10 @@
          {
             "rxNumber":"0689424",
             "drugName":"BOOSTRIX TDAP VACCINE SYRINGE",
+            "dispPrompt": "Y",
             "drugQuantity":"0.5",
             "imzType":"Tdap (Whooping Cough)",
-            "checkInTime":"2021-05-06T19:55:45.444Z",
+            "checkInTime":"2021-05-24T13:55:45.444Z",
             "preferredtextInd":"2",
             "digitalQuestionaireReceivedInd":"Y",
             "imzDoseNumber":"1",
@@ -71,6 +75,7 @@
          {
             "rxNumber":"0689425",
             "drugName":"BOOSTRIX TDAP VACCINE SYRUP",
+            "dispPrompt": "N",
             "drugQuantity":"0.5",
             "imzType":"Ldap (Whooping Cough)",
             "checkInTime":"2021-05-04T14:06:45.555Z",
@@ -84,6 +89,7 @@
          {
             "rxNumber":"0689426",
             "drugName":"BOOSTRIX VACCINE CAPSULE",
+            "dispPrompt": "N",
             "drugQuantity":"0.3",
             "imzType":"Rdap (Whooping Cough)",
             "checkInTime":"2021-04-28T13:55:45.666Z",
@@ -106,6 +112,7 @@
          {
             "rxNumber":"0689427",
             "drugName":"BOOSTRIX TDAP VACCINE SYRINGE",
+            "dispPrompt": "N",
             "drugQuantity":"0.2",
             "imzType":"Tdap (Whooping Cough)",
             "checkInTime":"2021-04-28T16:05:45.777Z",

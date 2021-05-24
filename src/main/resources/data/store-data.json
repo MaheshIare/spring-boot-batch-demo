@@ -3,6 +3,8 @@
 	"message": "success",
 	"offlineStatus": false,
 	"payload": {
+		"name": "checkInPromptWindow",
+		"value": "1-2",
 		"pharmacyInfo": {
 			"hoursOfOperation": [
 				{
