@@ -8,6 +8,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -22,11 +25,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.java.techhub.batch.demo.model.OperationHours;
 import com.java.techhub.batch.demo.model.Patient;
 import com.java.techhub.batch.demo.model.Prescription;
 import com.java.techhub.batch.demo.model.RootModel;
-import com.java.techhub.batch.demo.model.StoreResponse;
 
 /**
  * @author mahes
@@ -57,21 +58,24 @@ public class DataProcessor {
 		return rootModel;
 	}
 
-	public StoreResponse parseStoreJson() throws JsonParseException, JsonMappingException, IOException {
+	public Map<String, Object> parseStoreJson() throws JsonParseException, JsonMappingException, IOException {
 		log.info("Reading store data from json file...");
-		StoreResponse rootModel = objectMapper.readValue(new ClassPathResource("data/store-data.json").getFile(),
-				new TypeReference<StoreResponse>() {
-				});
+		@SuppressWarnings("unchecked")
+		Map<String, Object> rootModel = (Map<String, Object>) objectMapper.readValue(new ClassPathResource("data/store-data.json").getFile(),
+				HashMap.class);
 		return rootModel;
 	}
 
+	@SuppressWarnings("unchecked")
 	public RootModel processPatientDetails(RootModel rootModel) throws IOException {
-		StoreResponse storeData = parseStoreJson();
+		Map<String, Object> storeData = parseStoreJson();
 		boolean flag = validateCurrentTimeWithStoreTime(storeData);
 		if (flag) {
 			flagAllPrescriptions(rootModel);
 		} else {
 			log.info("Processing individual prescription...");
+			Map<String, Object> storePayload = (Map<String, Object>) storeData.get("payload");
+			String checkInPromptWindow = (String) storePayload.get("value");
 			if (!rootModel.getPatientDetails().isEmpty()) {
 				// Check if prescriptions for the patients can be flagged
 				for (Patient record : rootModel.getPatientDetails()) {
@@ -79,7 +83,7 @@ public class DataProcessor {
 						for (Prescription prescription : record.getPrescriptionDetails()) {
 							// Check if precription check in time falls in last 60 mins
 							if (prescription.getDispPrompt().equalsIgnoreCase(DISPLAY_PROMPT) && isPrescriptionFlagged(
-									prescription.getCheckInTime(), storeData.getPayload().getValue())) {
+									prescription.getCheckInTime(), checkInPromptWindow)) {
 								prescription.setNewFlag(FLAG);
 								record.setNewFlag(FLAG);
 								rootModel.setNewFlag(FLAG);
@@ -131,7 +135,7 @@ public class DataProcessor {
 		return false;
 	}
 
-	private boolean validateCurrentTimeWithStoreTime(StoreResponse storeData) throws IOException {
+	private boolean validateCurrentTimeWithStoreTime(Map<String, Object> storeData) throws IOException {
 		Date currentDateTime = null;
 		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		SimpleDateFormat time = new SimpleDateFormat("HH:mm");
@@ -175,11 +179,15 @@ public class DataProcessor {
 		return false;
 	}
 
-	private String getCloseTimeFromStore(String weekDay, StoreResponse storeResponse) {
-		for (OperationHours opHrs : storeResponse.getPayload().getPharmacyInfo().getHoursOfOperation()) {
-			if (opHrs.getDayOfWeek().equalsIgnoreCase(weekDay)) {
-				return opHrs.getCloseTime();
-			}
+	@SuppressWarnings("unchecked")
+	private String getCloseTimeFromStore(String weekDay, Map<String, Object> storeResponse) {
+		Map<String, Object> storePayload = (Map<String, Object>) storeResponse.get("payload");
+		Map<String, Object> pharmacyInfo = (Map<String, Object>) storePayload.get("pharmacyInfo");
+		List<Map<String, Object>> operationHours = (List<Map<String, Object>>) pharmacyInfo.get("hoursOfOperation");
+		for(Map<String, Object> operationHour: operationHours) {
+			String dayOfWeek = (String) operationHour.get("dayOfWeek");
+			if(dayOfWeek.equalsIgnoreCase(weekDay))
+				return (String) operationHour.get("closeTime");
 		}
 		return null;
 	}

@@ -3,6 +3,8 @@
  */
 package com.java.techhub.batch.demo.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.techhub.batch.demo.model.RootModel;
-import com.java.techhub.batch.demo.model.StoreResponse;
 import com.java.techhub.batch.demo.processor.DataProcessor;
 
 /**
@@ -39,7 +40,7 @@ public class ApiController {
 	}
 
 	@GetMapping("/store")
-	public ResponseEntity<StoreResponse> readStoreResponse() throws Exception {
-		return new ResponseEntity<StoreResponse>(dataProcessor.parseStoreJson(), HttpStatus.OK);
+	public ResponseEntity<Map<String, Object>> readStoreResponse() throws Exception {
+		return new ResponseEntity<Map<String, Object>>(dataProcessor.parseStoreJson(), HttpStatus.OK);
 	}
 }
